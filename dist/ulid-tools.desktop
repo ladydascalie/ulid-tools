@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=ULID Tools
+Exec=ulid-tools
+Icon=/usr/local/share/pixmaps/ulid-tools.png
