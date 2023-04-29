@@ -23,7 +23,6 @@ func Setup() error {
 
 // A build step that requires additional params, or platform specific steps for example
 func Build() error {
-	mg.Deps(Setup)
 	return sh.RunV("wails", "build", "-clean", "-upx")
 }
 

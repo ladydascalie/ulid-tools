@@ -21,7 +21,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "ULID Tools",
 		Width:  740,
-		Height: 300,
+		Height: 360,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
