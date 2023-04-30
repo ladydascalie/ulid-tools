@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import { errorIcon } from "./assets/images/error.svg";
   import { GenerateNewULID, ParseInput } from "../wailsjs/go/main/App.js";
   import Error from "./Error.svelte";
   import Success from "./Success.svelte";
@@ -11,12 +10,9 @@
     ulidAsHexPrefixed: string;
     ulidTimeComponent: string;
   }
-
   let errorMessage: string;
   let successMessage: string;
-
   let input: string;
-
   let data: Data;
 
   function generateNewULID(): void {
@@ -56,10 +52,6 @@
           errorMessage = "";
         }, 5000);
       });
-  }
-
-  function copy(e: MouseEvent): void {
-    console.log(e);
   }
 </script>
 
