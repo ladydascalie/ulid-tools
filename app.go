@@ -59,6 +59,9 @@ func (a *App) ParseInput(input string) (ParsedULID, error) {
 			input = input[2:]
 		}
 
+		// now, in case it's in UUID format, remove the dashes
+		input = strings.ReplaceAll(input, "-", "")
+
 		_, err := hex.DecodeString(input)
 		if err != nil {
 			// it's not a hex string either, return the error
