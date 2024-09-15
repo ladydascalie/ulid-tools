@@ -14,7 +14,7 @@ import (
 // Setup will ensure wails is installed.
 // It will also run the doctor command to ensure everything is setup correctly.
 func Setup() error {
-	if err := sh.RunV("go", "get", "github.com/wailsapp/wails/v2/cmd/wails@latest"); err != nil {
+	if err := sh.RunV("go", "install", "github.com/wailsapp/wails/v2/cmd/wails@latest"); err != nil {
 		return err
 	}
 
