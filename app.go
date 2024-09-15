@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/hex"
 	"fmt"
@@ -26,8 +27,10 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) GenerateNewULID() string {
-	return ulid.Make().String()
+func (a *App) GenerateNewULID() ParsedULID {
+	// don't care about the error here, we know it's a valid ULID.
+	parsed, _ := parse(ulid.Make().String())
+	return parsed
 }
 
 type ParsedULID struct {
@@ -37,7 +40,44 @@ type ParsedULID struct {
 	ULIDTimeComponent time.Time
 }
 
-func (a *App) ParseInput(input string) (ParsedULID, error) {
+type ParseInputResponse struct {
+	ULIDs  []ParsedULID
+	Errors []string
+}
+
+func (a *App) ParseInput(input string) ParseInputResponse {
+	// There could be a ULID of any format in the input, one per line.
+	// We need to parse each line separately, and return the results as a list.
+	var ulids []ParsedULID
+	var errors []string
+
+	line := 0
+
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	for scanner.Scan() {
+		line++
+		parsed, err := parse(scanner.Text())
+		if err != nil {
+			errors = append(errors, fmt.Sprintf("line %d: %s", line, err.Error()))
+			continue
+		}
+		ulids = append(ulids, parsed)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return ParseInputResponse{}
+	}
+
+	return ParseInputResponse{
+		ULIDs:  ulids,
+		Errors: errors,
+	}
+}
+
+func parse(input string) (ParsedULID, error) {
+	if input == "" {
+		return ParsedULID{}, fmt.Errorf("input is empty")
+	}
 	// first try to parse it as a ULID
 	id, err := ulid.ParseStrict(input)
 
