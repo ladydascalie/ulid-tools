@@ -10,7 +10,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
@@ -29,10 +28,9 @@ func main() {
 		Width:  1440,
 		Height: 980,
 		Linux: &linux.Options{
-			Icon:                icon,
-			WindowIsTranslucent: true,
-			WebviewGpuPolicy:    linux.WebviewGpuPolicyOnDemand,
-			ProgramName:         "ULID Tools",
+			Icon:             icon,
+			WebviewGpuPolicy: linux.WebviewGpuPolicyNever,
+			ProgramName:      "ULID Tools",
 		},
 		Mac: &mac.Options{
 			WebviewIsTransparent: false,
@@ -43,9 +41,6 @@ func main() {
 				Message: "A simple tool to generate and parse ULIDs",
 				Icon:    icon,
 			},
-		},
-		Windows: &windows.Options{
-			WindowIsTranslucent: true,
 		},
 		AssetServer: &assetserver.Options{
 			Assets: assets,

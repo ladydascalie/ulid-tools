@@ -1,5 +1,10 @@
 [Desktop Entry]
 Type=Application
+Categories=TextEditor;Development;IDE;
+Keywords=ulid;
 Name=ULID Tools
 Exec=ulid-tools
 Icon=/usr/local/share/pixmaps/ulid-tools.png
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
