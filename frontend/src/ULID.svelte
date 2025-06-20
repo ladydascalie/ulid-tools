@@ -4,10 +4,12 @@
 		ulid: string;
 		ulidAsHex: string;
 		ulidAsHexPrefixed: string;
+		uuid: string;
 		ulidTimeComponent: string;
 	}
 	export let data: Data[] = [];
 	export let sqlStyle = false;
+	export let hexStyle = true;
 	export let successMessage: string;
 	$: formattedData = data.map((entry) => {
 		console.log(sqlStyle);
@@ -16,6 +18,7 @@
 			formattedTimeComponent: sqlStyle
 				? formatTimeComponentAsSQL(entry.ulidTimeComponent)
 				: entry.ulidTimeComponent,
+			ulidAsHex: hexStyle ? entry.ulidAsHexPrefixed : entry.ulidAsHex,
 		};
 	});
 
@@ -35,7 +38,7 @@
 			<tr>
 				<th>ULID</th>
 				<th>ULID as Hex</th>
-				<th>ULID as Hex Prefixed</th>
+				<th>UUID</th>
 				<th>ULID Time Component</th>
 			</tr>
 			<!-- {#each data as { ulid, ulidAsHex, ulidAsHexPrefixed, ulidTimeComponent }} -->
@@ -48,7 +51,7 @@
 						<Copier message={item.ulidAsHex} bind:successMessage />
 					</td>
 					<td>
-						<Copier message={item.ulidAsHexPrefixed} bind:successMessage />
+						<Copier message={item.uuid} bind:successMessage />
 					</td>
 					<td>
 						<Copier message={item.formattedTimeComponent} bind:successMessage />

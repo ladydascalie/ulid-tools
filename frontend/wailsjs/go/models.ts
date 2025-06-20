@@ -4,6 +4,7 @@ export namespace main {
 	    ULID: string;
 	    ULIDHex: string;
 	    ULIDHexPrefixed: string;
+	    UUID: string;
 	    // Go type: time
 	    ULIDTimeComponent: any;
 	
@@ -16,6 +17,7 @@ export namespace main {
 	        this.ULID = source["ULID"];
 	        this.ULIDHex = source["ULIDHex"];
 	        this.ULIDHexPrefixed = source["ULIDHexPrefixed"];
+	        this.UUID = source["UUID"];
 	        this.ULIDTimeComponent = this.convertValues(source["ULIDTimeComponent"], null);
 	    }
 	

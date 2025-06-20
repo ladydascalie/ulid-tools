@@ -8,6 +8,7 @@
 		ulid: string;
 		ulidAsHex: string;
 		ulidAsHexPrefixed: string;
+		uuid: string;
 		ulidTimeComponent: string;
 	}
 	let errorMessage: string = "";
@@ -15,6 +16,7 @@
 	let input: string = "";
 	let data: Data[] = [];
 	let sqlStyle = false;
+	let hexStyle = true;
 
 	function generateNewULID(): void {
 		data = [];
@@ -57,6 +59,7 @@
 							ulid: entry.ULID,
 							ulidAsHex: entry.ULIDHex,
 							ulidAsHexPrefixed: entry.ULIDHexPrefixed,
+							uuid: entry.UUID,
 							ulidTimeComponent: entry.ULIDTimeComponent,
 						},
 					];
@@ -119,6 +122,16 @@
 			<span class="checkbox-custom"></span>
 			SQL Style Timestamps
 		</label>
+		<label for="hex-style" class="checkbox-label">
+			<input
+				type="checkbox"
+				name="hex-style"
+				id="hex-style"
+				bind:checked={hexStyle}
+			/>
+			<span class="checkbox-custom"></span>
+			Hex Prefixed
+		</label>
 		{#if errorMessage}
 			<Error message={errorMessage} />
 		{/if}
@@ -126,7 +139,7 @@
 			<Success message={successMessage} />
 		{/if}
 		<hr />
-		<Ulid {data} bind:successMessage bind:sqlStyle />
+		<Ulid {data} bind:successMessage bind:sqlStyle bind:hexStyle />
 	</section>
 	<footer>&copy; 2023 ULID Tools</footer>
 </main>

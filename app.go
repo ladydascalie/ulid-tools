@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
+	"github.com/google/uuid"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -30,6 +33,7 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) GenerateNewULID() ParsedULID {
 	// don't care about the error here, we know it's a valid ULID.
 	parsed, _ := parse(ulid.Make().String())
+	spew.Dump(parsed)
 	return parsed
 }
 
@@ -37,6 +41,7 @@ type ParsedULID struct {
 	ULID              string
 	ULIDHex           string
 	ULIDHexPrefixed   string
+	UUID              string
 	ULIDTimeComponent time.Time
 }
 
@@ -68,6 +73,10 @@ func (a *App) ParseInput(input string) ParseInputResponse {
 		return ParseInputResponse{}
 	}
 
+	ulids = slices.DeleteFunc(ulids, func(u ParsedULID) bool {
+		return u == ParsedULID{}
+	})
+
 	return ParseInputResponse{
 		ULIDs:  ulids,
 		Errors: errors,
@@ -75,9 +84,14 @@ func (a *App) ParseInput(input string) ParseInputResponse {
 }
 
 func parse(input string) (ParsedULID, error) {
+	// ignore empty lines.
 	if input == "" {
-		return ParsedULID{}, fmt.Errorf("input is empty")
+		return ParsedULID{}, nil
 	}
+
+	// if it's quoted, remove the quotes
+	input = strings.Trim(input, "\"'")
+
 	// first try to parse it as a ULID
 	id, err := ulid.ParseStrict(input)
 
@@ -86,18 +100,22 @@ func parse(input string) (ParsedULID, error) {
 		// it's a ulid, we're done here.
 		h := hex.EncodeToString(id.Bytes())
 
+		uid, err := uuid.FromBytes(id.Bytes())
+		if err != nil {
+			return ParsedULID{}, fmt.Errorf("failed converting ULID to UUID: %w", err)
+		}
+
 		return ParsedULID{
 			ULID:              id.String(),
 			ULIDHex:           strings.ToUpper(h),
 			ULIDHexPrefixed:   "0x" + strings.ToUpper(h),
+			UUID:              uid.String(),
 			ULIDTimeComponent: ulid.Time(id.Time()),
 		}, err
 	default:
 		// ok, it's not a ulid then, try to parse it as a hex string
-		// first remove the prefix if it's there
-		if strings.HasPrefix(input, "0x") {
-			input = input[2:]
-		}
+		// always remove the "0x" prefix if present
+		input = strings.TrimPrefix(input, "0x")
 
 		// now, in case it's in UUID format, remove the dashes
 		input = strings.ReplaceAll(input, "-", "")
@@ -110,17 +128,23 @@ func parse(input string) (ParsedULID, error) {
 
 		var id ulid.ULID
 
-		if _, err := hex.Decode(id[:], []byte(input)); err != nil {
+		if _, err = hex.Decode(id[:], []byte(input)); err != nil {
 			return ParsedULID{}, fmt.Errorf("failed decoding string, input is neither a ULID nor a hex string: %w", err)
 		}
 
 		// we're doing it again, but this time we know it's a ULID
 		h := hex.EncodeToString(id.Bytes())
 
+		uid, err := uuid.FromBytes(id.Bytes())
+		if err != nil {
+			return ParsedULID{}, fmt.Errorf("failed converting ULID to UUID: %w", err)
+		}
+
 		return ParsedULID{
 			ULID:              id.String(),
 			ULIDHex:           strings.ToUpper(h),
 			ULIDHexPrefixed:   "0x" + strings.ToUpper(h),
+			UUID:              uid.String(),
 			ULIDTimeComponent: ulid.Time(id.Time()),
 		}, nil
 	}

@@ -23,7 +23,7 @@ func Setup() error {
 
 // A build step that requires additional params, or platform specific steps for example
 func Build() error {
-	return sh.RunV("wails", "build", "-clean", "-upx")
+	return sh.RunV("wails", "build", "-clean", "-upx", "-tags", "webkit2_41")
 }
 
 type Linux mg.Namespace
